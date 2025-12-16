@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>36 | Baxau Scanner Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS CHO PHẦN CONTACT (MỚI) --- */
+        .contact-grid {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            background: #0d1117;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .social-btn:hover { transform: translateY(-3px); }
+        
+        /* Màu riêng cho từng nút khi di chuột vào */
+        .btn-fb:hover { border-color: #1877F2; color: #1877F2; box-shadow: 0 0 10px rgba(24, 119, 242, 0.2); }
+        .btn-tele:hover { border-color: #229ED9; color: #229ED9; box-shadow: 0 0 10px rgba(34, 158, 217, 0.2); }
+        .btn-mail:hover { border-color: #EA4335; color: #EA4335; box-shadow: 0 0 10px rgba(234, 67, 53, 0.2); }
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --primary: #58a6ff;
+            --success: #238636;
+            --danger: #da3633;
+            --warning: #d29922;
+            --purple: #a371f7;
+            --text-main: #c9d1d9;
+            --border: #30363d;
+        }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column; /* Xếp dọc các phần tử */
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 0; /* Khoảng cách trên dưới */
+        }
+
+        /* --- PHẦN SCANNER CHÍNH --- */
+        .container {
+            width: 700px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            margin-bottom: 30px; /* Cách phần dưới */
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 15px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #8b949e;
+            margin-bottom: 2rem;
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 6px;
+            padding: 30px;
+            text-align: center;
+            transition: 0.3s;
+            cursor: pointer;
+            background: #0d1117;
+        }
+
+        .drop-zone:hover { border-color: var(--primary); background: rgba(88, 166, 255, 0.1); }
+        .drop-zone p { margin: 0; color: #8b949e; }
+
+        .btn-scan {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: linear-gradient(90deg, #1f6feb, #a371f7);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+        .btn-scan:hover { filter: brightness(1.2); box-shadow: 0 0 15px rgba(163, 113, 247, 0.4); }
+        .btn-scan:disabled { background: #30363d; cursor: not-allowed; }
+
+        #results-area { margin-top: 25px; display: none; }
+        
+        .status-badge {
+            display: block; text-align: center; padding: 12px;
+            border-radius: 4px; font-weight: bold; margin-bottom: 15px; font-size: 1.1rem;
+        }
+        .status-clean { background: rgba(35, 134, 54, 0.15); color: #3fb950; border: 1px solid var(--success); }
+        .status-infected { background: rgba(218, 54, 51, 0.15); color: #f85149; border: 1px solid var(--danger); }
+
+        .log-container {
+            max-height: 400px; overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 4px; background: #0d1117;
+        }
+
+        .log-item {
+            padding: 12px; border-bottom: 1px solid var(--border);
+            font-size: 0.85rem; display: flex; align-items: flex-start;
+        }
+        
+        .tag {
+            padding: 3px 8px; border-radius: 3px; font-size: 0.7rem;
+            font-weight: bold; margin-right: 10px; min-width: 70px; text-align: center;
+        }
+        .tag-critical { background: var(--danger); color: white; box-shadow: 0 0 5px var(--danger); }
+        .tag-high { background: var(--warning); color: black; }
+        .tag-medium { background: #1f6feb; color: white; }
+        .tag-suffer { background: #6f42c1; color: white; border: 1px solid #dba6ff; box-shadow: 0 0 8px #6f42c1; }
+        
+        code { background: rgba(110, 118, 129, 0.4); padding: 2px 5px; border-radius: 3px; color: #ff7b72; }
+
+        /* --- CÁC PHẦN MỚI (INFO, GUIDE, CRE) --- */
+        .info-wrapper {
+            width: 700px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .info-card h2 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card p, .info-card li {
+            color: #8b949e;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        .color-guide span {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .cre-section {
+            text-align: center;
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            color: #8b949e;
+            font-size: 0.8rem;
+        }
+
+        .cre-name {
+            color: var(--purple);
+            font-weight: bold;
+            font-size: 1rem;
+            text-shadow: 0 0 5px rgba(163, 113, 247, 0.5);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🐧 BAXAU SCANNER TOOL v3.6 </h1>
+    <p class="subtitle">Supports: Hex, Base64, URL, Unicode, ROT13</p>
+
+    <input type="file" id="fileInput" hidden>
+    <div class="drop-zone" id="dropZone">
+        <p>📂 Kéo thả file mã nguồn hoặc <strong>Nhấn để chọn</strong></p>
+        <p style="font-size:0.8rem; margin-top:5px; color:#a371f7;">Hệ thống sẽ tự động bẻ khóa các lớp mã hóa</p>
+    </div>
+
+    <button class="btn-scan" id="scanBtn" onclick="processScan()">KÍCH HOẠT HỆ THỐNG QUÉT</button>
+
+    <div id="results-area">
+        <div id="scanStatus"></div>
+        <div class="log-container">
+            <ul style="list-style:none; padding:0; margin:0;" id="logList"></ul>
+        </div>
+    </div>
+</div>
+
+<div class="info-wrapper">
+    
+    <div class="info-card">
+        <h2>🛡️ Về Công Cụ Này</h2>
+        <p>Đây là công cụ phân tích mã độc tĩnh (Static Malware Analysis) chạy hoàn toàn trên trình duyệt (Client-side). 
+        An toàn 100% vì file của bạn <strong>không bao giờ được tải lên máy chủ</strong>. Tự hào là công cụ "đụt" nhất thế giới. </p>
+        <ul style="margin-top:10px; padding-left:20px;">
+            <li>Phát hiện các hàm nguy hiểm (Eval, Shell_exec, Backdoor...).</li>
+            <li>Tự động giải mã 5 lớp: <strong>Hex, Base64, ROT13, URL, Unicode</strong>.</li>
+            <li>Phát hiện định danh Hacker và các mẫu Web Shell nổi tiếng (WSO, C99).</li>
+        </ul>
+    </div>
+
+    <div class="info-card">
+        <h2>📖 Hướng Dẫn & Cấp Độ Rủi Ro</h2>
+        <p>Kéo thả file <code>.php</code>, <code>.js</code>, <code>.txt</code> vào ô quét. Hệ thống sẽ trả về các mức cảnh báo:</p>
+        <div class="color-guide" style="margin-top:10px;">
+            <p><span style="background:#da3633; color:white;">RẤT CAO</span> Nguy hiểm chết người (Shell, System Access).</p>
+            <p><span style="background:#d29922; color:black;">CAO</span> Hàm thực thi code động, nén file đáng ngờ.</p>
+            <p><span style="background:#1f6feb; color:white;">TRUNG BÌNH</span> Các kỹ thuật mã hóa, gọi hàm callback.</p>
+            <p><span style="background:#6f42c1; color:white;">PHẢI CHỊU</span> 🐧 Phát hiện Trùm Cuối (Signature Đặc Biệt).</p>
+        </div>
+    </div>
+
+    <div class="info-card">
+        <h2>📬 Liên Hệ & Hỗ Trợ</h2>
+        <p>Bạn phát hiện mẫu mã độc mới? Hoặc muốn đóng góp ý tưởng phát triển? Hãy liên hệ ngay:</p>
+        
+        <div class="contact-grid">
+            <a href="http://localhost:3000/" target="_blank" class="social-btn btn-fb">
+                🌐 Facebook
+            </a>
+            
+            <a href="https://youtu.be/dQw4w9WgXcQ?si=vrBetuVsSmjJO0X-" target="_blank" class="social-btn btn-youtube">
+                ▶️ youtube 
+            </a>
+            
+            <a href="mailto:hoangtv.25ns@vku.udn.vn" class="social-btn btn-mail">
+                📧 Gửi Email
+            </a>
+        </div>
+    </div>
+
+    <div class="cre-section">
+        <p>Developed & Maintained by 36 Team</p>
+        <p class="cre-name">🐧 ce11way0n0 | hahuyhoang | hoanglegiabao | dangduykhanh |  </p>
+        
+        <p style="margin-top:5px; font-size: 0.75rem;">|Vietnam Korea University of Information and Communication Technology (VKU)|ID: 25NS018|</p>
+         <p style="margin-top:20px;">Đồ án Nhập môn ngành & Kỹ năng mềm 2025 - K25 </p>
+        <p style="margin-top:20px;">© 2077 Baxau Security. v3.6/DEMO. All rights reserved. </p>
+    </div>
+
+    
+</div>
+
+<script>
+    // --- 1. CONFIG: DATABASE SIGNATURES ---
+    const signatures = [
+        // Custom Rule
+        { pattern: "tranvanhoang{VKU}25NS018", risk: "PHẢI CHỊU", desc: "🐧 TARGET MATCHED: Phát hiện định danh số của Hacker tranvanhoang là hacker top 1 thế giới!" },
+
+        // RCE
+        { pattern: "eval(", risk: "CAO", desc: "Hàm thực thi code động (Eval) - Top 1 dấu hiệu Backdoor" },
+        { pattern: "assert(", risk: "CAO", desc: "Hàm Assert - Hacker dùng thay thế eval để né bộ lọc" },
+        { pattern: "call_user_func", risk: "TRUNG BÌNH", desc: "Gọi hàm động (Callback) - Kỹ thuật nâng cao để giấu code" },
+        { pattern: "create_function", risk: "CAO", desc: "Tạo hàm ẩn danh - Đã bị loại bỏ trong PHP mới vì quá nguy hiểm" },
+        
+        // Obfuscation
+        { pattern: "base64_decode", risk: "TRUNG BÌNH", desc: "Hàm giải mã Base64 - Dùng để giấu nội dung mã độc" },
+        { pattern: "gzinflate", risk: "CAO", desc: "Giải nén chuỗi (Gzip) - Thường kết hợp với Base64 để nén virus" },
+        { pattern: "str_rot13", risk: "TRUNG BÌNH", desc: "Đảo ký tự ROT13 - Kỹ thuật mã hóa cổ điển" },
+        { pattern: "pack(", risk: "TRUNG BÌNH", desc: "Đóng gói dữ liệu Binary - Hacker dùng để giấu Shellcode" },
+
+        // System & Network
+        { pattern: "shell_exec", risk: "RẤT CAO", desc: "Thực thi lệnh Shell - Kiểm soát hoàn toàn Server" },
+        { pattern: "system(", risk: "RẤT CAO", desc: "Lệnh System - Nguy hiểm tương đương shell_exec" },
+        { pattern: "passthru(", risk: "RẤT CAO", desc: "Lệnh Passthru - Thường dùng trong các Web Shell" },
+        { pattern: "proc_open", risk: "CAO", desc: "Mở quy trình hệ thống mới" },
+        { pattern: "popen(", risk: "CAO", desc: "Mở đường ống lệnh (Pipe command)" },
+        { pattern: "curl_exec", risk: "TRUNG BÌNH", desc: "Dùng cURL gửi dữ liệu ra ngoài (Data Exfiltration)" },
+        { pattern: "wget", risk: "RẤT CAO", desc: "Lệnh tải file độc hại từ server khác về máy" },
+
+        // Web Shell
+        { pattern: "WSO 2.", risk: "RẤT CAO", desc: "Phát hiện Web Shell WSO (Công cụ hack web phổ biến nhất)" },
+        { pattern: "c99shell", risk: "RẤT CAO", desc: "Phát hiện Web Shell C99 cổ điển" },
+        { pattern: "FilesMan", risk: "CAO", desc: "Trình quản lý file trái phép (Thường có trong WSO Shell)" },
+        { pattern: "/etc/passwd", risk: "RẤT CAO", desc: "Cố gắng đọc file mật khẩu hệ thống Linux" },
+        { pattern: "C:\\Windows\\System32", risk: "CAO", desc: "Truy cập thư mục hệ thống Windows" }
+    ];
+
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    let selectedFile = null;
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
+    fileInput.addEventListener('change', () => { if(fileInput.files.length) handleFile(fileInput.files[0]); });
+
+    function handleFile(file) {
+        selectedFile = file;
+        dropZone.innerHTML = `<p>Đã nạp: <strong style="color:white">${file.name}</strong></p>`;
+        document.getElementById('results-area').style.display = 'none';
+        document.getElementById('scanBtn').disabled = false;
+        document.getElementById('scanBtn').innerText = "KÍCH HOẠT HỆ THỐNG QUÉT";
+    }
+
+    // --- DECODER ENGINE ---
+    function runDecoders(originalText) {
+        let results = [];
+        results.push({ type: "Original", text: originalText });
+
+        let hexDecoded = originalText.replace(/\\x([0-9A-Fa-f]{2})/g, (m, c) => String.fromCharCode(parseInt(c, 16)));
+        if (hexDecoded !== originalText) results.push({ type: "Hex Decoder", text: hexDecoded });
+
+        let uniDecoded = originalText.replace(/\\u([0-9A-Fa-f]{4})/g, (m, c) => String.fromCharCode(parseInt(c, 16)));
+        if (uniDecoded !== originalText) results.push({ type: "Unicode Decoder", text: uniDecoded });
+
+        try {
+            let urlDecoded = decodeURIComponent(originalText);
+            if (urlDecoded !== originalText) results.push({ type: "URL Decoder", text: urlDecoded });
+        } catch(e) {}
+
+        let rot13Decoded = originalText.replace(/[a-zA-Z]/g, function (c) {
+            return String.fromCharCode((c <= "Z" ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
+        });
+        if (rot13Decoded !== originalText) results.push({ type: "ROT13 Decoder", text: rot13Decoded });
+
+        const base64Regex = /([A-Za-z0-9+/]{20,}={0,2})/g;
+        let matches = originalText.match(base64Regex);
+        if (matches) {
+            matches.forEach(m => {
+                try {
+                    let b64 = atob(m);
+                    results.push({ type: "Base64 Extract", text: b64 });
+                } catch(e) {}
+            });
+        }
+        return results;
+    }
+
+    // --- SCAN LOGIC ---
+    async function processScan() {
+        if (!selectedFile) { alert("Chưa chọn file!"); return; }
+
+        const btn = document.getElementById('scanBtn');
+        const resArea = document.getElementById('results-area');
+        const logList = document.getElementById('logList');
+        const statusDiv = document.getElementById('scanStatus');
+        
+        resArea.style.display = 'block';
+        logList.innerHTML = '';
+        statusDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#a371f7;">...</div>';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                const decodedLayers = runDecoders(content);
+                let allThreats = [];
+
+                decodedLayers.forEach(layer => {
+                    signatures.forEach(sig => {
+                        if (layer.text.includes(sig.pattern)) {
+                            const isDuplicate = allThreats.some(t => t.pattern === sig.pattern);
+                            if (!isDuplicate) {
+                                allThreats.push(sig);
+                            }
+                        }
+                    });
+                });
+
+                btn.disabled = false;
+                btn.innerText = "QUÉT FILE KHÁC";
+                
+                if (allThreats.length > 0) {
+                    statusDiv.innerHTML = `<div class="status-badge status-infected">⚠️ PHÁT HIỆN ${allThreats.length} MỐI ĐE DỌA</div>`;
+                    
+                    allThreats.forEach(t => {
+                        let badgeClass = 'tag-medium'; 
+                        if(t.risk === 'RẤT CAO') badgeClass = 'tag-critical'; 
+                        if(t.risk === 'CAO') badgeClass = 'tag-high';         
+                        if(t.risk === 'PHẢI CHỊU') badgeClass = 'tag-suffer'; 
+
+                        const li = document.createElement('li');
+                        li.className = 'log-item';
+                        li.innerHTML = `
+                            <span class="tag ${badgeClass}">${t.risk}</span>
+                            <div style="width:100%">
+                                <div>Phát hiện: <code>${t.pattern}</code></div>
+                                <div style="color:#8b949e; margin-top:4px; font-size:0.8rem;">${t.desc}</div>
+                            </div>
+                        `;
+                        logList.appendChild(li);
+                    });
+                } else {
+                    statusDiv.innerHTML = `<div class="status-badge status-clean">✅ MAYBE SAFE 🐧 (ĐÃ QUÉT MÃ HÓA)</div>`;
+                    logList.innerHTML = `<li class="log-item" style="justify-content:center; color:#8b949e;">Không tìm thấy mã độc.</li>`;
+                }
+            };
+            reader.readAsText(selectedFile);
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>
