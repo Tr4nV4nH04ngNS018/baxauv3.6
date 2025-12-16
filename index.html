@@ -28,14 +28,16 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            cursor: pointer;
         }
 
         .social-btn:hover { transform: translateY(-3px); }
         
         /* Màu riêng cho từng nút khi di chuột vào */
         .btn-fb:hover { border-color: #1877F2; color: #1877F2; box-shadow: 0 0 10px rgba(24, 119, 242, 0.2); }
-        .btn-tele:hover { border-color: #229ED9; color: #229ED9; box-shadow: 0 0 10px rgba(34, 158, 217, 0.2); }
+        .btn-youtube:hover { border-color: #FF0000; color: #FF0000; box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); }
         .btn-mail:hover { border-color: #EA4335; color: #EA4335; box-shadow: 0 0 10px rgba(234, 67, 53, 0.2); }
+        
         :root {
             --bg-color: #0d1117;
             --card-bg: #161b22;
@@ -54,10 +56,10 @@
             color: var(--text-main);
             margin: 0;
             display: flex;
-            flex-direction: column; /* Xếp dọc các phần tử */
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 40px 0; /* Khoảng cách trên dưới */
+            padding: 40px 0;
         }
 
         /* --- PHẦN SCANNER CHÍNH --- */
@@ -68,7 +70,7 @@
             border-radius: 8px;
             padding: 2rem;
             box-shadow: 0 0 30px rgba(0,0,0,0.8);
-            margin-bottom: 30px; /* Cách phần dưới */
+            margin-bottom: 30px;
             position: relative;
             z-index: 10;
         }
@@ -262,41 +264,29 @@
         <p>Bạn phát hiện mẫu mã độc mới? Hoặc muốn đóng góp ý tưởng phát triển? Hãy liên hệ ngay:</p>
         
         <div class="contact-grid">
-            <a href=" https://kickable-francina-penitently.ngrok-free.dev" target="_blank" class="social-btn btn-fb">
+            <a href="https://kickable-francina-penitently.ngrok-free.dev" target="_blank" class="social-btn btn-fb">
                 🌐 Facebook
             </a>
             
             <a href="https://youtu.be/dQw4w9WgXcQ?si=vrBetuVsSmjJO0X-" target="_blank" class="social-btn btn-youtube">
-                ▶️ youtube 
+                ▶️ Youtube 
             </a>
             
-            <button onclick="copyEmail()" class="social-btn btn-mail" style="cursor: pointer;">
+            <button onclick="copyEmail()" class="social-btn btn-mail">
                 📧 Copy Email
-        </button>
-
-        <script>
-        function copyEmail() {
-        // Thay email của bạn vào đây
-            const email = "hoangtv.25ns@vku.udn.vn";
-        
-            navigator.clipboard.writeText(email);
-            alert("Đã copy email: " + email + "\nBạn có thể dán (Paste) vào nơi khác!");
-    }
-</script>
-            </a>
+            </button>
         </div>
     </div>
 
     <div class="cre-section">
         <p>Developed & Maintained by 36 Team</p>
-        <p class="cre-name">🐧 ce11way0n0 | hahuyhoang | hoanglegiabao | dangduykhanh |  </p>
+        <p class="cre-name">🐧 ce11way0n0 | hahuyhoang | hoanglegiabao | dangduykhanh</p>
         
         <p style="margin-top:5px; font-size: 0.75rem;">|Vietnam Korea University of Information and Communication Technology (VKU)|ID: 25NS018|</p>
          <p style="margin-top:20px;">Đồ án Nhập môn ngành & Kỹ năng mềm 2025 - K25 </p>
         <p style="margin-top:20px;">© 2077 Baxau Security. v3.6/DEMO. All rights reserved. </p>
     </div>
 
-    
 </div>
 
 <script>
@@ -449,10 +439,21 @@
             reader.readAsText(selectedFile);
         }, 1000);
     }
+
+    // --- HÀM COPY EMAIL (ĐÃ THÊM MỚI VÀO ĐÂY) ---
+    function copyEmail() {
+        const email = "hoangtv.25ns@vku.udn.vn";
+        
+        navigator.clipboard.writeText(email)
+            .then(() => {
+                alert("Đã copy email: " + email + "\nBạn có thể dán (Paste) vào nơi khác!");
+            })
+            .catch(err => {
+                // Phòng trường hợp trình duyệt chặn copy
+                alert("Email của tôi là: " + email);
+            });
+    }
 </script>
 
 </body>
-
 </html>
-
-
