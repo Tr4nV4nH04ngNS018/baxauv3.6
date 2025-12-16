@@ -270,8 +270,19 @@
                 ▶️ youtube 
             </a>
             
-            <a href="mailto:hoangtv.25ns@vku.udn.vn" class="social-btn btn-mail">
-                📧 Gửi Email
+            <button onclick="copyEmail()" class="social-btn btn-mail" style="cursor: pointer;">
+                📧 Copy Email
+        </button>
+
+        <script>
+        function copyEmail() {
+        // Thay email của bạn vào đây
+            const email = "hoangtv.25ns@vku.udn.vn";
+        
+            navigator.clipboard.writeText(email);
+            alert("Đã copy email: " + email + "\nBạn có thể dán (Paste) vào nơi khác!");
+    }
+</script>
             </a>
         </div>
     </div>
@@ -443,4 +454,5 @@
 </body>
 
 </html>
+
 
