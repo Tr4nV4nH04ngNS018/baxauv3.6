@@ -326,7 +326,7 @@
         { pattern: "assert(", risk: "CAO", desc: "Hàm Assert - Hacker dùng thay thế eval để né bộ lọc" },
         { pattern: "call_user_func", risk: "TRUNG BÌNH", desc: "Gọi hàm động (Callback) - Kỹ thuật nâng cao để giấu code" },
         { pattern: "create_function", risk: "CAO", desc: "Tạo hàm ẩn danh - Đã bị loại bỏ trong PHP mới vì quá nguy hiểm" },
-        
+        { pattern: "VIRUS", risk: "TRUNG BÌNH", desc: "phát hiện cụm virus " },
         // Obfuscation
         { pattern: "base64_decode", risk: "TRUNG BÌNH", desc: "Hàm giải mã Base64 - Dùng để giấu nội dung mã độc" },
         { pattern: "gzinflate", risk: "CAO", desc: "Giải nén chuỗi (Gzip) - Thường kết hợp với Base64 để nén virus" },
@@ -482,3 +482,4 @@
 
 </body>
 </html>
+
