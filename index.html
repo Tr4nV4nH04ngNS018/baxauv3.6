@@ -60,6 +60,9 @@
             align-items: center;
             min-height: 100vh;
             padding: 40px 0;
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax - Ngăn bôi đen văn bản */
         }
 
         /* --- PHẦN SCANNER CHÍNH --- */
@@ -257,7 +260,6 @@
             <p><span style="background:#1f6feb; color:white;">TRUNG BÌNH</span> Các kỹ thuật mã hóa, gọi hàm callback.</p>
            </div>
     </div>
-    <!-- Elfsight Poll | Untitled Poll -->
     <script src="https://elfsightcdn.com/platform.js" async></script>
     <div class="elfsight-app-ceab946c-4a41-4a0b-971d-755a83c120d1" data-elfsight-app-lazy></div>
     <div class="info-card">
@@ -291,6 +293,29 @@
 </div>
 
 <script>
+    // --- 0. SECURITY: ANTI-COPY & INSPECT ---
+    // Chặn chuột phải
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // Chặn phím tắt (F12, Ctrl+U, Ctrl+Shift+I, v.v...)
+    document.onkeydown = function(e) {
+        if (e.keyCode == 123) { // F12
+            return false;
+        }
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { // Ctrl+Shift+I
+            return false;
+        }
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { // Ctrl+Shift+C
+            return false;
+        }
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { // Ctrl+Shift+J
+            return false;
+        }
+        if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { // Ctrl+U
+            return false;
+        }
+    }
+
     // --- 1. CONFIG: DATABASE SIGNATURES ---
     const signatures = [
         // Custom Rule
@@ -418,7 +443,7 @@
                     allThreats.forEach(t => {
                         let badgeClass = 'tag-medium'; 
                         if(t.risk === 'RẤT CAO') badgeClass = 'tag-critical'; 
-                        if(t.risk === 'CAO') badgeClass = 'tag-high';         
+                        if(t.risk === 'CAO') badgeClass = 'tag-high';           
                         if(t.risk === 'PHẢI CHỊU') badgeClass = 'tag-suffer'; 
 
                         const li = document.createElement('li');
@@ -457,7 +482,3 @@
 
 </body>
 </html>
-
-
-
-
