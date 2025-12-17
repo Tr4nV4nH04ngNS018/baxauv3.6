@@ -441,7 +441,7 @@
         }, 1000);
     }
 
-    // --- HÀM COPY EMAIL (ĐÃ THÊM MỚI VÀO ĐÂY) ---
+    // --- HÀM COPY EMAIL ---
     function copyEmail() {
         const email = "hoangtv.25ns@vku.udn.vn";
         
@@ -450,7 +450,6 @@
                 alert("Đã copy email: " + email + "\nBạn có thể dán (Paste) vào nơi khác!");
             })
             .catch(err => {
-                // Phòng trường hợp trình duyệt chặn copy
                 alert("Email của tôi là: " + email);
             });
     }
@@ -458,6 +457,7 @@
 
 </body>
 </html>
+
 
 
 
