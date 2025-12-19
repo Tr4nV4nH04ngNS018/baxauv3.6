@@ -6,7 +6,7 @@
     <title>36 | Baxau Scanner Pro</title>
     <link rel="icon" href="https://meme-insider.com/meme-insider-logo.svg" type="image/svg+xml">
     <style>
-        /* --- CSS CHO PHẦN CONTACT (MỚI) --- */
+        /* --- CSS CHO PHẦN CONTACT --- */
         .contact-grid {
             display: flex;
             gap: 15px;
@@ -33,7 +33,6 @@
 
         .social-btn:hover { transform: translateY(-3px); }
         
-        /* Màu riêng cho từng nút khi di chuột vào */
         .btn-fb:hover { border-color: #1877F2; color: #1877F2; box-shadow: 0 0 10px rgba(24, 119, 242, 0.2); }
         .btn-youtube:hover { border-color: #FF0000; color: #FF0000; box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); }
         .btn-mail:hover { border-color: #EA4335; color: #EA4335; box-shadow: 0 0 10px rgba(234, 67, 53, 0.2); }
@@ -60,9 +59,9 @@
             align-items: center;
             min-height: 100vh;
             padding: 40px 0;
-            -webkit-user-select: none; /* Safari */
-            -ms-user-select: none; /* IE 10 and IE 11 */
-            user-select: none; /* Standard syntax - Ngăn bôi đen văn bản */
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         /* --- PHẦN SCANNER CHÍNH --- */
@@ -140,6 +139,11 @@
             border: 1px solid var(--border);
             border-radius: 4px; background: #0d1117;
         }
+
+        .log-container::-webkit-scrollbar { width: 8px; }
+        .log-container::-webkit-scrollbar-track { background: #0d1117; }
+        .log-container::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+        .log-container::-webkit-scrollbar-thumb:hover { background: #58a6ff; }
 
         .log-item {
             padding: 12px; border-bottom: 1px solid var(--border);
@@ -243,12 +247,22 @@
     <div class="info-card">
         <h2>🛡️ Về Công Cụ Này</h2>
         <p>Đây là công cụ phân tích mã độc tĩnh (Static Malware Analysis) chạy hoàn toàn trên trình duyệt (Client-side). 
-        An toàn 100% vì file của bạn <strong>không bao giờ được tải lên máy chủ</strong>.  </p>
+        An toàn 100% vì file của bạn <strong>không bao giờ được tải lên máy chủ</strong>. </p>
         <ul style="margin-top:10px; padding-left:20px;">
             <li>Phát hiện các hàm nguy hiểm (Eval, Shell_exec, Backdoor...).</li>
             <li>Tự động giải mã 5 lớp: <strong>Hex, Base64, ROT13, URL, Unicode</strong>.</li>
             <li>Phát hiện định danh Hacker và các mẫu Web Shell nổi tiếng (WSO, C99).</li>
         </ul>
+    </div>
+
+    <div class="info-card">
+        <h2>🔍 Cơ Sở Dữ Liệu Nhận Diện <span id="db-count" style="font-size:0.8rem; background:#30363d; color:white; padding:2px 8px; border-radius:10px; margin-left:auto;"></span></h2>
+        <p>Dưới đây là danh sách các mẫu mã độc (Signatures) mà Baxau Scanner đang theo dõi:</p>
+        
+        <div class="log-container" style="max-height: 250px;">
+            <ul id="database-list" style="list-style:none; padding:0; margin:0;">
+                </ul>
+        </div>
     </div>
 
     <div class="info-card">
@@ -260,8 +274,10 @@
             <p><span style="background:#1f6feb; color:white;">TRUNG BÌNH</span> Các kỹ thuật mã hóa, gọi hàm callback.</p>
            </div>
     </div>
+
     <script src="https://elfsightcdn.com/platform.js" async></script>
     <div class="elfsight-app-ceab946c-4a41-4a0b-971d-755a83c120d1" data-elfsight-app-lazy></div>
+    
     <div class="info-card">
         <h2>📬 Liên Hệ & Hỗ Trợ</h2>
         <p>Bạn phát hiện mẫu mã độc mới? Hoặc muốn đóng góp ý tưởng phát triển? Hãy liên hệ ngay:</p>
@@ -294,37 +310,24 @@
 
 <script>
     // --- 0. SECURITY: ANTI-COPY & INSPECT ---
-    // Chặn chuột phải
     document.addEventListener('contextmenu', event => event.preventDefault());
 
-    // Chặn phím tắt (F12, Ctrl+U, Ctrl+Shift+I, v.v...)
     document.onkeydown = function(e) {
-        if (e.keyCode == 123) { // F12
-            return false;
-        }
-        if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { // Ctrl+Shift+I
-            return false;
-        }
-        if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { // Ctrl+Shift+C
-            return false;
-        }
-        if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { // Ctrl+Shift+J
-            return false;
-        }
-        if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { // Ctrl+U
-            return false;
-        }
+        if (e.keyCode == 123) { return false; }
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; }
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; }
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; }
+        if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; }
     }
 
     // --- 1. CONFIG: DATABASE SIGNATURES ---
     const signatures = [
-        // Custom Rule
-        { pattern: "tranvanhoang{VKU}25NS018", risk: "PHẢI CHỊU", desc: "🐧 TARGET MATCHED: Phát hiện định danh số của Hacker tranvanhoang là hacker top 1 thế giới!" },
-
+        // Custom Rule (Vẫn giữ để quét, nhưng sẽ ẩn khi hiển thị)
+        { pattern: "tranvanhoang{VKU}25NS018", risk: "PHẢI CHỊU", desc: "🐧 TARGET MATCHED: Phát hiện định danh số của Hacker tranvanhoang là hacker top 1 thế giới!", hidden: true},
 
         //dấu hiệu test
-        { pattern: "VIRUS", risk: "TRUNG BÌNH", desc: "phát hiện cụm virus " },
-        { pattern: "virus", risk: "TRUNG BÌNH", desc: "phát hiện cụm virus " },
+        { pattern: "VIRUS", risk: "TRUNG BÌNH", desc: "phát hiện cụm virus ", hidden: true },
+        { pattern: "virus", risk: "TRUNG BÌNH", desc: "phát hiện cụm virus ", hidden: true },
         { pattern: "Virus", risk: "TRUNG BÌNH", desc: "phát hiện cụm virus " },
         
         // RCE
@@ -355,6 +358,39 @@
         { pattern: "C:\\Windows\\System32", risk: "CAO", desc: "Truy cập thư mục hệ thống Windows" }
     ];
 
+    // --- HÀM RENDER DATABASE (ĐÃ CẬP NHẬT ẨN "PHẢI CHỊU") ---
+    function renderDatabase() {
+        const dbList = document.getElementById('database-list');
+        const dbCount = document.getElementById('db-count');
+        dbList.innerHTML = '';
+        
+        // Lọc bỏ những cái có risk là "PHẢI CHỊU" trước khi hiển thị
+        const visibleSignatures = signatures.filter(s => !s.hidden);
+        
+        dbCount.innerText = `${visibleSignatures.length} Mẫu`;
+
+        visibleSignatures.forEach(t => {
+            let badgeClass = 'tag-medium'; 
+            if(t.risk === 'RẤT CAO') badgeClass = 'tag-critical'; 
+            if(t.risk === 'CAO') badgeClass = 'tag-high';            
+
+            const li = document.createElement('li');
+            li.className = 'log-item';
+            li.innerHTML = `
+                <span class="tag ${badgeClass}">${t.risk}</span>
+                <div style="width:100%">
+                    <div style="font-family: monospace; font-weight: bold; color: var(--primary);">"${t.pattern}"</div>
+                    <div style="color:#8b949e; margin-top:4px; font-size:0.8rem;">${t.desc}</div>
+                </div>
+            `;
+            dbList.appendChild(li);
+        });
+    }
+    
+    // Gọi hàm render ngay khi trang tải xong
+    renderDatabase();
+
+    // --- LOGIC QUÉT GIỮ NGUYÊN ---
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
     let selectedFile = null;
@@ -448,7 +484,7 @@
                     allThreats.forEach(t => {
                         let badgeClass = 'tag-medium'; 
                         if(t.risk === 'RẤT CAO') badgeClass = 'tag-critical'; 
-                        if(t.risk === 'CAO') badgeClass = 'tag-high';           
+                        if(t.risk === 'CAO') badgeClass = 'tag-high';            
                         if(t.risk === 'PHẢI CHỊU') badgeClass = 'tag-suffer'; 
 
                         const li = document.createElement('li');
@@ -487,6 +523,3 @@
 
 </body>
 </html>
-
-
-
